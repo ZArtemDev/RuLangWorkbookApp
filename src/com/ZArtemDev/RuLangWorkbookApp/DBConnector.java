@@ -13,11 +13,11 @@ public class DBConnector {
     private String userName = "root";
     private String password = "root";
 
-    private DBConnector(){
+    public DBConnector(){
         connectDataBase();
     }
 
-    private String getDatabases(){
+    public String getDatabases(){
         String tmp = "";
         try {
             String query = "SHOW DATABASES";
