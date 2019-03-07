@@ -15,6 +15,11 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        sqlIndex.setText(dbConnector.getDatabases());
+
+        UserDAO users = new UserDAO();
+
+        users.save(new User("Till", "321", (short) 1));
     }
+
+
 }

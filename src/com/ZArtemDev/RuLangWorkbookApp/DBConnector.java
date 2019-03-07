@@ -8,16 +8,28 @@ public class DBConnector {
 
     private String dbName;
 
-    private Connection connection = null;
+    private static Connection connection = null;
     private final String url = "jdbc:mysql://localhost/users?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false";
-    private String userName = "root";
-    private String password = "root";
+    private final String userName = "root";
+    private final String password = "root";
 
     public DBConnector(){
-        connectDataBase();
+    }
+
+    public void executeStatement(String query){
+        try {
+            System.out.println(query);
+            PreparedStatement preparedStmt = connection.prepareStatement(query);
+            preparedStmt.execute();
+            preparedStmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public String getDatabases(){
+        connectDataBase();
+
         String tmp = "";
         try {
             String query = "SHOW DATABASES";
@@ -33,6 +45,9 @@ public class DBConnector {
             e.printStackTrace();
         }
         System.out.println(tmp);
+
+        disconnectDataBase();
+
         return tmp;
 
     }
@@ -74,7 +89,11 @@ public class DBConnector {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-            System.out.println("Disconnected");
+            System.out.println("Sql database disconnected");
         }
+    }
+
+    Connection getConnection(){
+        return connection;
     }
 }
