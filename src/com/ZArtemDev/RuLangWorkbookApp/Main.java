@@ -10,7 +10,8 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("task/task.fxml"));
+
+        Parent root = FXMLLoader.load(getClass().getResource("logger.fxml"));
         primaryStage.setTitle("Hello World");
         primaryStage.setScene(new Scene(root, 720, 480));
         primaryStage.show();
@@ -19,6 +20,7 @@ public class Main extends Application {
     @Override
     public void stop() throws Exception {
         super.stop();
+        DBConnector.getInstance().closeConnection();
     }
 
     public static void main(String[] args) {

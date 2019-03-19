@@ -10,11 +10,12 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class UserDAO implements DAO<User> {
-    private DBConnector dbConnector = new DBConnector();
+    DBConnector dbConnector = null;
 
     private List<User> users = new ArrayList<>();
 
-    public UserDAO(){
+    public UserDAO(DBConnector connector){
+        dbConnector = connector;
     }
 
     @Override
@@ -29,11 +30,9 @@ public class UserDAO implements DAO<User> {
 
     @Override
     public void save(User user) {
-        dbConnector.connectDataBase();
         String query = "INSERT INTO users(username, password, type) value('" + user.getName() + "'," + user.getPassword() + "," + user.getType() + ");";
         dbConnector.executeStatement(query);
         users.add(user);
-        dbConnector.disconnectDataBase();
     }
 
     @Override

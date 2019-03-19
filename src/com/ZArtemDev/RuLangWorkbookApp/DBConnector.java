@@ -3,20 +3,41 @@ package com.ZArtemDev.RuLangWorkbookApp;
 import java.sql.*;
 
 public class DBConnector {
-    private static String activeUser;
-    private static short userType;
 
-    private String dbName;
+    private static volatile DBConnector instance;
 
-    private static Connection connection = null;
-    private final String url = "jdbc:mysql://localhost/users?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false";
-    private final String userName = "root";
-    private final String password = "root";
+    private Connection connection;
 
-    public DBConnector(){
+    public static DBConnector getInstance() {  //Singleton
+        if (instance == null) {
+            synchronized (DBConnector.class) {
+                if (instance == null) {
+                    instance = new DBConnector();
+                }
+            }
+        }
+        return instance;
     }
 
-    public void executeStatement(String query){
+    public DBConnector() {
+
+        final String url = "jdbc:mysql://localhost/users?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false";
+        final String userName = "root";
+        final String password = "root";
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
+            this.connection = DriverManager.getConnection(url, userName, password);
+            System.out.println("Sql connection opened");
+
+        } catch (Exception e) {
+            System.out.println("MySQL connection is broken.");
+            System.err.println(e.getMessage());
+
+        }
+    }
+
+    public void executeStatement(String query) {
         try {
             System.out.println(query);
             PreparedStatement preparedStmt = connection.prepareStatement(query);
@@ -27,73 +48,20 @@ public class DBConnector {
         }
     }
 
-    public String getDatabases(){
-        connectDataBase();
 
-        String tmp = "";
-        try {
-            String query = "SHOW DATABASES";
-
-            System.out.println(query);
-            Statement st = connection.createStatement();
-            ResultSet rs = st.executeQuery(query);
-            while (rs.next()){
-                tmp += rs.getString("database") + '\n';
-            }
-            st.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        System.out.println(tmp);
-
-        disconnectDataBase();
-
-        return tmp;
-
+    public Connection getConnection(){
+        return this.connection;
     }
 
-    public boolean checkUser(String username, String password) {
-        try {
-            String query = "SELECT * FROM users WHERE username = '" + username + "' and password = '" + password + "'";
-
-            System.out.println(query);
-            Statement st = connection.createStatement();
-            ResultSet rs = st.executeQuery(query);
-
-            if (rs.next()) {
-                activeUser= rs.getString("username");
-                userType = rs.getShort("type");
-                return true;
-            }
-            st.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    public void connectDataBase(){
-        try {
-            connection = DriverManager.getConnection(url, userName, password);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        System.out.println("Sql database connected");
-    }
-
-    public void disconnectDataBase(){
-        if(connection != null)
-        {
+    public void closeConnection() {
+        if (this.connection != null) {
             try {
-                connection.close();
+                this.connection.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-            System.out.println("Sql database disconnected");
+            System.out.println("Sql connection closed");
         }
     }
-
-    Connection getConnection(){
-        return connection;
-    }
 }
+
