@@ -1,20 +1,22 @@
 package com.ZArtemDev.RuLangWorkbookApp;
 
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 public class Main extends Application {
 
+    private double xOffset = 0.0;
+    private double yOffset = 0.0;
+
     @Override
     public void start(Stage primaryStage) throws Exception{
-
-        Parent root = FXMLLoader.load(getClass().getResource("logger.fxml"));
-        primaryStage.setTitle("Hello World");
-        primaryStage.setScene(new Scene(root, 720, 480));
-        primaryStage.show();
+        StageLoader.createFirstStage(primaryStage, "logger.fxml", "RuLang Application");
     }
 
     @Override

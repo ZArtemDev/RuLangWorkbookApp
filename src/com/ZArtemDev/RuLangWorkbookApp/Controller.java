@@ -20,7 +20,7 @@ import java.sql.Statement;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
-
+    private DBConnector dbConnector = null;
     private Connection connection = null;
 
     private final int ADMINISTRATOR = 1;
@@ -37,19 +37,23 @@ public class Controller implements Initializable {
     @FXML
     Button loginBtn;
 
+    @FXML
+    Label errorInfoLabel;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        DBConnector dbConnector = DBConnector.getInstance();
+        this.dbConnector = DBConnector.getInstance();
         this.connection = dbConnector.getConnection();
 
     }
 
-    public void createNewStage(ActionEvent event, String fxml) {
+    public void createNewStage(ActionEvent event, String fxml, String title) {
         try {
         Parent root = FXMLLoader.load(getClass().getResource(fxml));
         Stage newStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        newStage.setScene(new Scene(root, 1200, 675));
+        newStage.setTitle(title);
+        newStage.setScene(new Scene(root, 1024, 576));
         newStage.show();
         }catch (Exception ex) {
             System.out.println("ERROR new window");
@@ -60,19 +64,17 @@ public class Controller implements Initializable {
 
     public void login(ActionEvent event){
         try {
-            System.out.println("Clicked");
-            System.out.println("Username: " + userNameField.getText());
             if(isValidUser(userNameField.getText(), passwordField.getText())) {
                 Statement st = this.connection.createStatement();
                 ResultSet rs = st.executeQuery("select * from rulangdatabase.users where username = '" + userNameField.getText() + "';");
                 while (rs.next()) {
-
+                    dbConnector.setActiveUser(userNameField.getText());
                     if (rs.getInt("type") == ADMINISTRATOR) {
-                        createNewStage(event, "admin.fxml");
+                        StageLoader.createNewStage(event, "admin.fxml", "Administrator page");
                     } else if (rs.getInt("type") == TEACHER) {
-                        createNewStage(event, "teacher.fxml");
+                        StageLoader.createNewStage(event, "teacher.fxml", "Teacher page");
                     } else if (rs.getInt("type") == STUDENT) {
-                        createNewStage(event, "student.fxml");
+                        StageLoader.createNewStage(event, "student.fxml", "Student page");
                     } else {
                         System.out.println("Incorrect usertype in database");
                     }
@@ -97,7 +99,7 @@ public class Controller implements Initializable {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        System.out.println("Authorization error");
+        errorInfoLabel.setText("Неправильное имя или пароль");
         return false;
     }
 

@@ -5,6 +5,7 @@ import java.sql.*;
 public class DBConnector {
 
     private static volatile DBConnector instance;
+    private String activeUser = "";
 
     private Connection connection;
 
@@ -20,8 +21,7 @@ public class DBConnector {
     }
 
     public DBConnector() {
-
-        final String url = "jdbc:mysql://localhost/users?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false";
+        final String url = "jdbc:mysql://localhost/rulangdatabase?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false";
         final String userName = "root";
         final String password = "root";
 
@@ -53,6 +53,12 @@ public class DBConnector {
         return this.connection;
     }
 
+    public void setActiveUser(String activeUser) {
+        this.activeUser = activeUser;
+    }
+
+    public String getActiveUser(){ return  this.activeUser;}
+
     public void closeConnection() {
         if (this.connection != null) {
             try {
@@ -60,6 +66,7 @@ public class DBConnector {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+            this.activeUser = "";
             System.out.println("Sql connection closed");
         }
     }
