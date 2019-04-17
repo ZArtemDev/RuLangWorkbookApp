@@ -1,3 +1,39 @@
 .root{
     -fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #FF9966, #FF5E62);
 }
+.text-field{
+    -fx-border-color:  transparent transparent black transparent;
+    -fx-border-width: 1;
+    -fx-background-color: transparent;
+}
+
+.text-field:focused{
+     -fx-border-color:  transparent transparent #909090 transparent;
+     -fx-border-width: 1.5;
+     -fx-background-color: transparent;
+ }
+
+.text-field:hover{
+    -fx-border-color:  transparent transparent #0009EF transparent;
+    -fx-border-width: 1.5;
+    -fx-background-color: transparent;
+}
+
+#loginBtn{
+    -fx-background-radius: 5 5;
+    -fx-background-color: #FF5E62;
+}
+
+#loginBtn:focused{
+    -fx-background-radius: 5 5;
+    -fx-background-color: #FF5E62;
+}
+
+#exitBtn {
+    -fx-background-color: transparent;
+    -fx-background-image: url('com/ZArtemDev/RuLangWorkbookApp/resources/close_icon.png');
+}
+
+#vbox{
+    -fx-background-color: white;
+}

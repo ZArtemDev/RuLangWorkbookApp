@@ -1,5 +1,6 @@
 package com.ZArtemDev.RuLangWorkbookApp;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -38,6 +39,9 @@ public class Controller implements Initializable {
     Button loginBtn;
 
     @FXML
+    Button exitBtn;
+
+    @FXML
     Label errorInfoLabel;
 
     @Override
@@ -45,20 +49,9 @@ public class Controller implements Initializable {
 
         this.dbConnector = DBConnector.getInstance();
         this.connection = dbConnector.getConnection();
+        exitBtn.setId("exitBtn");
+        exitBtn.setOnAction(event -> Platform.exit());
 
-    }
-
-    public void createNewStage(ActionEvent event, String fxml, String title) {
-        try {
-        Parent root = FXMLLoader.load(getClass().getResource(fxml));
-        Stage newStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        newStage.setTitle(title);
-        newStage.setScene(new Scene(root, 1024, 576));
-        newStage.show();
-        }catch (Exception ex) {
-            System.out.println("ERROR new window");
-            ex.printStackTrace();
-        }
     }
 
 

@@ -33,4 +33,14 @@
    <right>
       <Pane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
    </right>
+   <top>
+      <Button fx:id="exitBtn" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="28.0" prefWidth="30.0" BorderPane.alignment="TOP_RIGHT">
+         <BorderPane.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </BorderPane.margin>
+      </Button>
+   </top>
+   <bottom>
+      <Pane prefHeight="76.0" prefWidth="600.0" BorderPane.alignment="CENTER" />
+   </bottom>
 </BorderPane>
