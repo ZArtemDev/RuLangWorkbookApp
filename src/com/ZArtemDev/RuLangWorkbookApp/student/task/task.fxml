@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.TextFlow?>
 
-<VBox xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ZArtemDev.RuLangWorkbookApp.task.TaskController">
+<VBox xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ZArtemDev.RuLangWorkbookApp.student.task.TaskController">
    <children>
       <TextFlow fx:id="textFlow" prefHeight="200.0" prefWidth="200.0" />
       <Button fx:id="btn" mnemonicParsing="false" onAction="#getResult" text="Result" />

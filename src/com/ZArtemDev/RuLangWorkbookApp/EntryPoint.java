@@ -1,18 +1,10 @@
 package com.ZArtemDev.RuLangWorkbookApp;
 
+import com.ZArtemDev.RuLangWorkbookApp.utilities.DBConnector;
 import javafx.application.Application;
-import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
-public class Main extends Application {
-
-    private double xOffset = 0.0;
-    private double yOffset = 0.0;
+public class EntryPoint extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{

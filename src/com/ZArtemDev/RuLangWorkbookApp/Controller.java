@@ -1,17 +1,13 @@
 package com.ZArtemDev.RuLangWorkbookApp;
 
+import com.ZArtemDev.RuLangWorkbookApp.utilities.DBConnector;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
 
 import java.net.URL;
 import java.sql.Connection;
@@ -19,82 +15,79 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Controller implements Initializable {
+
     private DBConnector dbConnector = null;
     private Connection connection = null;
+    private Logger log = null;
+    private String type = null;
+    private String user_info = null;
 
-    private final int ADMINISTRATOR = 1;
-    private final int TEACHER = 2;
-    private final int STUDENT = 3;
-
-
-    @FXML
-    TextField userNameField;
-
-    @FXML
-    TextField passwordField;
-
-    @FXML
-    Button loginBtn;
-
-    @FXML
-    Button exitBtn;
-
-    @FXML
-    Label errorInfoLabel;
+    @FXML TextField userNameField;
+    @FXML TextField passwordField;
+    @FXML Button loginBtn;
+    @FXML Button exitBtn;
+    @FXML Label errorInfoLabel;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
         this.dbConnector = DBConnector.getInstance();
         this.connection = dbConnector.getConnection();
+        log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
         exitBtn.setId("exitBtn");
         exitBtn.setOnAction(event -> Platform.exit());
-
     }
-
 
     public void login(ActionEvent event){
-        try {
             if(isValidUser(userNameField.getText(), passwordField.getText())) {
-                Statement st = this.connection.createStatement();
-                ResultSet rs = st.executeQuery("select * from rulangdatabase.users where username = '" + userNameField.getText() + "';");
-                while (rs.next()) {
-                    dbConnector.setActiveUser(userNameField.getText());
-                    if (rs.getInt("type") == ADMINISTRATOR) {
-                        StageLoader.createNewStage(event, "admin.fxml", "Administrator page");
-                    } else if (rs.getInt("type") == TEACHER) {
-                        StageLoader.createNewStage(event, "teacher.fxml", "Teacher page");
-                    } else if (rs.getInt("type") == STUDENT) {
-                        StageLoader.createNewStage(event, "student.fxml", "Student page");
-                    } else {
-                        System.out.println("Incorrect usertype in database");
-                    }
+                dbConnector.setActiveUser(user_info);
+                if (type.equals("ad")) {
+                    StageLoader.createNewStage(event, "admin/admin.fxml", "Administrator page");
+                } else if (type.equals("th")) {
+                    StageLoader.createNewStage(event, "teacher/teacher.fxml", "Teacher page");
+                } else if (type.equals("st")) {
+                    StageLoader.createNewStage(event, "student/student.fxml", "Student page");
+                } else {
+                    log.logp(Level.SEVERE, "Controller", "login", "Incorrect user type in database");
                 }
-                st.close();
             }
-        }catch (SQLException ex) {
-            System.out.println("ERROR connection");
-            ex.printStackTrace();
-        }
     }
 
-    public boolean isValidUser(String username, String password) {
+    private boolean isValidUser(String username, String password) {
+        type = username.substring(0, 2);
+        String query = "";
+        switch (type){
+            case "ad":
+                query ="select * from rulangdatabase.administrators where login ='"
+                        + username + "' and password = '" + password + "'";
+                break;
+            case "th":
+                query ="select * from rulangdatabase.teachers where login ='"
+                        + username + "' and password = '" + password + "'";
+                break;
+            case "st":
+                query ="select * from rulangdatabase.students where login ='"
+                        + username + "' and password = '" + password + "'";
+                break;
+        }
         try {
-            String query = "SELECT * FROM rulangdatabase.users WHERE username = '" + username + "' and password = '" + password + "'";
+            log.logp(Level.INFO, "Controller", "isValidUser", query);
 
-            System.out.println(query);
             Statement st = connection.createStatement();
             ResultSet rs = st.executeQuery(query);
-            if(rs.next()){ return true;};
+            if(rs.next()){
+                user_info = rs.getString("last_name") + " " + rs.getString("first_name");
+                System.out.println(user_info);
+                return true;
+            };
             st.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        errorInfoLabel.setText("РќРµРїСЂР°РІРёР»СЊРЅРѕРµ РёРјСЏ РёР»Рё РїР°СЂРѕР»СЊ");
+        errorInfoLabel.setText("Неправильное имя или пароль");
         return false;
     }
-
-
 }

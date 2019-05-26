@@ -1,4 +1,4 @@
-package com.ZArtemDev.RuLangWorkbookApp.task;
+package com.ZArtemDev.RuLangWorkbookApp.student.task;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;

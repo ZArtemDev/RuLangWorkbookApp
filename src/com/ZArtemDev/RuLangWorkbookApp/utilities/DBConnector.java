@@ -1,4 +1,4 @@
-package com.ZArtemDev.RuLangWorkbookApp;
+package com.ZArtemDev.RuLangWorkbookApp.utilities;
 
 import java.sql.*;
 

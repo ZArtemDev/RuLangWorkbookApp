@@ -1,4 +1,4 @@
-package com.ZArtemDev.RuLangWorkbookApp;
+package com.ZArtemDev.RuLangWorkbookApp.utilities;
 
 public class User {
     private String name;
