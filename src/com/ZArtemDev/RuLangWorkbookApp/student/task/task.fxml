@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.TextFlow?>
 
-<VBox xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ZArtemDev.RuLangWorkbookApp.student.task.TaskController">
-   <children>
-      <TextFlow fx:id="textFlow" prefHeight="200.0" prefWidth="200.0" />
-      <Button fx:id="btn" mnemonicParsing="false" onAction="#getResult" text="Result" />
-   </children>
-</VBox>
+<BorderPane fx:id="root" maxWidth="1000.0" minWidth="100.0" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ZArtemDev.RuLangWorkbookApp.student.task.TaskController">
+   <bottom>
+      <Button fx:id="button_next" mnemonicParsing="false" text="Далее" BorderPane.alignment="CENTER" />
+   </bottom>
+   <top>
+      <ProgressBar fx:id="progressBar_progress" maxWidth="1000.0" minWidth="100.0" prefWidth="600.0" progress="0.0" BorderPane.alignment="CENTER" />
+   </top>
+   <center>
+      <VBox fx:id="vBox_task" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER" />
+   </center>
+</BorderPane>

@@ -8,7 +8,7 @@ public class EntryPoint extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        StageLoader.createFirstStage(primaryStage, "logger.fxml", "RuLang Application");
+        StageLoader.createFirstStage(primaryStage, "student/task/task.fxml", "RuLang Application");
     }
 
     @Override

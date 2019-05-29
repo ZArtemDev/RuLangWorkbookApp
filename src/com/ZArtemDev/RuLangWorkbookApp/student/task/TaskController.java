@@ -1,68 +1,93 @@
 package com.ZArtemDev.RuLangWorkbookApp.student.task;
 
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
 import java.net.URL;
+import java.util.LinkedList;
+import java.util.Random;
 import java.util.ResourceBundle;
 
 public class TaskController implements Initializable {
+    String string = "           Дорогой _удрик!             \n " +
+            "   Я х_чу рассказать тебе о своей ж_зни.\n" +
+            "   Уч_ники старших кла__ов учстроили ля нас в школе живой уголок." +
+            " _ам есть маленький ё_, черепаха, мышонок и черный у_." +
+            " Все р_бята о них заботятся.\n" +
+            "   Приезжай к нам!\n" ;
+    String rightResult = "М_о_и_е_сс_Т_ж_ж_е_";
+
+    Task task;
+    LinkedList<Node> ll;
+
+
 
     @FXML
-    TextFlow textFlow;
+    BorderPane root;
 
     @FXML
-    Button btn;
+    VBox vBox_task;
 
-    private ObservableList list;
+    @FXML
+    Button button_next;
 
-    public void getResult(){
-        String rightResult = "e";
-        String s = "";
-        for(int i = 0; i < textFlow.getChildren().size(); i++){
-            if(textFlow.getChildren().get(i) instanceof TextField){
-                s += ((TextField) textFlow.getChildren().get(i)).getText();
-            }
-        }
-        if(s.equals(rightResult)){
-            System.out.println("That's right");
-        }else {
-            System.out.println("That's wrong");
-        }
-    }
+    @FXML
+    ProgressBar progressBar_progress;
+
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        String string = "           Р”РѕСЂРѕРіРѕР№ _СѓРґСЂРёРє!             \n " +
-                        "   РЇ С…_С‡Сѓ СЂР°СЃСЃРєР°Р·Р°С‚СЊ С‚РµР±Рµ Рѕ СЃРІРѕРµР№ Р¶_Р·РЅРё.\n" +
-                        "   РЈС‡_РЅРёРєРё СЃС‚Р°СЂС€РёС… РєР»Р°__РѕРІ СѓС‡СЃС‚СЂРѕРёР»Рё Р»СЏ РЅР°СЃ РІ С€РєРѕР»Рµ Р¶РёРІРѕР№ СѓРіРѕР»РѕРє." +
-                        " _Р°Рј РµСЃС‚СЊ РјР°Р»РµРЅСЊРєРёР№ С‘_, С‡РµСЂРµРїР°С…Р°, РјС‹С€РѕРЅРѕРє Рё С‡РµСЂРЅС‹Р№ Сѓ_." +
-                        " Р’СЃРµ СЂ_Р±СЏС‚Р° Рѕ РЅРёС… Р·Р°Р±РѕС‚СЏС‚СЃСЏ.\n" +
-                        "   РџСЂРёРµР·Р¶Р°Р№ Рє РЅР°Рј!" ;
+        button_next.setOnAction(event -> nextTask());
+        progressBar_progress.setPrefWidth(root.getPrefWidth());
 
-        String[] strings = string.split("_");
-        list = textFlow.getChildren();
+        progressBar_progress.setProgress(0.0);
 
-        LimitedTextField textField = new LimitedTextField();
-        textField.setPrefColumnCount(1);
+        ll = new LinkedList<>();
+    }
 
-        for(String s : strings ){
-            System.out.println(s);
-            if(!s.equals("")) {
-                list.add(new Text(s));
-                list.add(new LimitedTextField());
-            } else {
-                list.remove(list.size()-1);
-                list.add(new LimitedTextField(2));
+    public void nextTask(){
+        vBox_task.getChildren().clear();
+        if(progressBar_progress.getProgress() < 1) {
+            progressBar_progress.setProgress(progressBar_progress.getProgress()+0.1);
+
+            if(!ll.isEmpty()) {
+                if (task.getAnswer(ll).equals(rightResult)) {
+
+                    System.out.println("task.getAnswer " + task.getAnswer(ll) + "\nrightResult " + rightResult + "\nRight!");
+                } else {
+                    System.out.println("task.getAnswer " + task.getAnswer(ll) + "\nrightResult " + rightResult + "\nWrong!");
+                }
             }
-        }
-        list.remove(list.size()-1);
-        Button btn = new Button("Result");
 
+            getTask();
+
+            ll = task.getContentList();
+
+
+            vBox_task.getChildren().addAll(task.coverIntoContainers(ll));
+        }
+
+
+    }
+
+    public void getTask(){
+        int type;
+        Random random = new Random();
+        type = random.nextInt(2);
+        if(type == 0){
+            System.out.println("InsertLetterTask");
+            task = new InsertLetterTask(string, rightResult);
+        }else  if(type == 1){
+            System.out.println("TypeLetterTask");
+            task = new TypeLetterTask(string, rightResult);
+        }
     }
 }

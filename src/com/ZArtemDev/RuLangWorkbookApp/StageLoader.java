@@ -17,8 +17,10 @@ public class StageLoader {
     public static void createFirstStage(Stage primaryStage, String fxml, String title){
         try {
             Parent root = FXMLLoader.load(StageLoader.class.getResource(fxml));
-            primaryStage.initStyle(StageStyle.UNDECORATED);
-            root.setOnMousePressed(new EventHandler<MouseEvent>() {
+            //primaryStage.initStyle(StageStyle.UNDECORATED);
+            
+            primaryStage.setResizable(true);
+            /*root.setOnMousePressed(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
                     xOffset = event.getSceneX();
@@ -31,7 +33,7 @@ public class StageLoader {
                     primaryStage.setX(event.getScreenX() - xOffset);
                     primaryStage.setY(event.getScreenY() - yOffset);
                 }
-            });
+            });*/
 
             primaryStage.setTitle(title);
             primaryStage.setScene(new Scene(root, 1024, 576));
@@ -46,7 +48,7 @@ public class StageLoader {
         try {
             Parent root = FXMLLoader.load(StageLoader.class.getResource(fxml));
             Stage newStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            root.setOnMousePressed(new EventHandler<MouseEvent>() {
+            /*root.setOnMousePressed(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
                     xOffset = event.getSceneX();
@@ -59,7 +61,7 @@ public class StageLoader {
                     newStage.setX(event.getScreenX() - xOffset);
                     newStage.setY(event.getScreenY() - yOffset);
                 }
-            });
+            });*/
 
             newStage.setTitle(title);
             newStage.setScene(new Scene(root, 1024, 576));
