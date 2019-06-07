@@ -1,0 +1,52 @@
+.root {
+    -fx-background-color: white;
+}
+
+#header{
+    -fx-border-width : 0 0 1 0;
+    -fx-border-color: black;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,1), 10, 0, 0, 0);
+    -fx-background-color: white;
+}
+
+
+#contentPane{
+    -fx-background-color: white;
+    -fx-border-radius: 5 5;
+    -fx-border-color: gray;
+    -fx-pref-height: 300;
+}
+
+#lettersPane{
+    -fx-background-color: white;
+    -fx-border-color: gray;
+    -fx-border-radius: 5 5;
+    -fx-alignment: center;
+    -fx-padding: 10;
+}
+
+#vBox_task{
+    -fx-background-color: white;
+    -fx-border-radius: 5 5;
+    -fx-spacing: 5;
+}
+
+#button_exit, #button_start, #button_next{
+    -fx-background-radius: 5 5;
+     -fx-background-color: #f39c12;}
+
+.progress-bar > .bar {
+    -fx-accent: #f39c12;
+    -fx-background-color: linear-gradient(
+        from 0px .75em to .75em 0px,
+        repeat,
+        #f39c12 0%,
+        #f39c12 49%,
+        #e67e22 50%,
+        #e67e22 99%
+    );
+}
+
+.progress-bar > .track {
+      -fx-background-color: #f39c12
+}

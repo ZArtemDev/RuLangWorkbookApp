@@ -18,7 +18,7 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Controller implements Initializable {
+public class LoggerController  implements Initializable {
 
     private DBConnector dbConnector = null;
     private Connection connection = null;
@@ -39,19 +39,22 @@ public class Controller implements Initializable {
         log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
         exitBtn.setId("exitBtn");
         exitBtn.setOnAction(event -> Platform.exit());
+
+        userNameField.setText("thtest");
+        passwordField.setText("test");
     }
 
     public void login(ActionEvent event){
             if(isValidUser(userNameField.getText(), passwordField.getText())) {
                 dbConnector.setActiveUser(user_info);
                 if (type.equals("ad")) {
-                    StageLoader.createNewStage(event, "admin/admin.fxml", "Administrator page");
+                    StageLoader.createNewStage(event,"admin/admin.fxml", null, "Administrator page");
                 } else if (type.equals("th")) {
-                    StageLoader.createNewStage(event, "teacher/teacher.fxml", "Teacher page");
+                    StageLoader.createNewStage(event, "teacher/teacher.fxml", null, "Teacher page");
                 } else if (type.equals("st")) {
-                    StageLoader.createNewStage(event, "student/student.fxml", "Student page");
+                    StageLoader.createNewStage(event,"student/student.fxml", "student/student.css", "Student page");
                 } else {
-                    log.logp(Level.SEVERE, "Controller", "login", "Incorrect user type in database");
+                    log.logp(Level.SEVERE, "LoggerController", "login", "Incorrect user type in database");
                 }
             }
     }
@@ -74,15 +77,15 @@ public class Controller implements Initializable {
                 break;
         }
         try {
-            log.logp(Level.INFO, "Controller", "isValidUser", query);
+            log.logp(Level.INFO, "LoggerController", "isValidUser", query);
 
             Statement st = connection.createStatement();
             ResultSet rs = st.executeQuery(query);
             if(rs.next()){
-                user_info = rs.getString("last_name") + " " + rs.getString("first_name");
+                user_info = rs.getString("login");
                 System.out.println(user_info);
                 return true;
-            };
+            }
             st.close();
         } catch (SQLException e) {
             e.printStackTrace();

@@ -8,16 +8,19 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
+import java.awt.*;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -85,6 +88,7 @@ public class TunningSchoolPaneController implements Initializable {
                                             e.printStackTrace();
                                         }
                                         root.getChildren().remove(gridPane_select_school);
+                                        root.getChildren().add(new Label(comboBox_school.getValue()));
                                         getClasses();
                                     }
                                 });
@@ -115,14 +119,29 @@ public class TunningSchoolPaneController implements Initializable {
     private void addClass(ActionEvent event){
         final Stage dialog = new Stage();
         dialog.initModality(Modality.APPLICATION_MODAL);
+        dialog.initStyle(StageStyle.UNDECORATED);
         VBox dialogVbox = new VBox(20);
+        dialogVbox.setAlignment(Pos.TOP_CENTER);
+        dialogVbox.setStyle("-fx-background-color: #f39c12;"
+                            + "-fx-border-color: gray");
+        HBox hBox = new HBox();
+        hBox.setAlignment(Pos.TOP_RIGHT);
+        Button button_exit = new Button();
+        button_exit.setPrefSize(30, 30);
+        button_exit.setStyle("-fx-background-color: transparent;"
+                + "-fx-background-image: url('com/ZArtemDev/RuLangWorkbookApp/resources/close_icon.png');"
+                + "-fx-margin: 0 0 0 20");
+        button_exit.setOnAction(event1 -> dialog.close());
+        hBox.getChildren().add(button_exit);
+        dialogVbox.getChildren().add(hBox);
+
         dialogVbox.getChildren().add(new Text("Добавить класс"));
         TextField textField_class = new TextField();
         dialogVbox.getChildren().add(textField_class);
         Button button_add = new Button("Добавить");
         button_add.setOnAction(event1 -> getValue(dialog, textField_class));
         dialogVbox.getChildren().add(button_add);
-        Scene dialogScene = new Scene(dialogVbox, 200, 100);
+        Scene dialogScene = new Scene(dialogVbox, 200, 200);
         dialog.setScene(dialogScene);
         dialog.show();
     }

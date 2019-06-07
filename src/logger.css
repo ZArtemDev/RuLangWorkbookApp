@@ -1,5 +1,5 @@
 .root{
-    -fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #FF9966, #FF5E62);
+    -fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #f39c12, #d35400);
 }
 .text-field{
     -fx-border-color:  transparent transparent black transparent;
@@ -21,12 +21,12 @@
 
 #loginBtn{
     -fx-background-radius: 5 5;
-    -fx-background-color: #FF5E62;
+    -fx-background-color: #f39c12;
 }
 
 #loginBtn:focused{
     -fx-background-radius: 5 5;
-    -fx-background-color: #FF5E62;
+    -fx-background-color: #f39c12;
 }
 
 #exitBtn {
@@ -36,4 +36,5 @@
 
 #vbox{
     -fx-background-color: white;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,1), 10, 0, 0, 0);
 }

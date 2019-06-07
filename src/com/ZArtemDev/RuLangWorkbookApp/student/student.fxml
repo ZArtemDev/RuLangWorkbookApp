@@ -3,13 +3,16 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ZArtemDev.RuLangWorkbookApp.student.StudentController">
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@student.css" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ZArtemDev.RuLangWorkbookApp.student.StudentController">
    <top>
-      <HBox alignment="CENTER_RIGHT" prefHeight="37.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+      <HBox fx:id="header" alignment="CENTER_RIGHT" prefHeight="37.0" prefWidth="600.0" BorderPane.alignment="CENTER">
          <children>
             <Label fx:id="label_username">
                <HBox.margin>
@@ -22,7 +25,28 @@
          </children></HBox>
    </top>
    <center>
-      <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+      <BorderPane fx:id="borderPane_task" prefHeight="344.0" prefWidth="560.0" BorderPane.alignment="CENTER">
+         <center>
+            <Button fx:id="button_start" mnemonicParsing="false" text="Начать задание" BorderPane.alignment="CENTER" />
+         </center>
+         <bottom>
+            <Button fx:id="button_next" mnemonicParsing="false" text="Далее" BorderPane.alignment="TOP_RIGHT" />
+         </bottom>
+         <top>
+            <VBox fx:id="vBox_progress_n_labels" BorderPane.alignment="CENTER">
+               <children>
+                  <ProgressBar fx:id="progressBar_progress" maxWidth="1000.0" prefWidth="600.0" progress="0.0" />
+                  <Label fx:id="label_task_number">
+                     <font>
+                        <Font size="24.0" />
+                     </font></Label>
+                  <Label fx:id="label_task_goal">
+                     <font>
+                        <Font size="24.0" />
+                     </font></Label>
+               </children>
+            </VBox>
+         </top></BorderPane>
    </center>
    <left>
       <Pane prefWidth="20.0" BorderPane.alignment="CENTER" />

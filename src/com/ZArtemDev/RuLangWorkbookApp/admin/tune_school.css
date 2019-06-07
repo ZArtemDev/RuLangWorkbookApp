@@ -1,0 +1,13 @@
+#flowPane_classes {
+    -fx-hgap: 10;
+    -fx-vgap: 10;
+}
+
+#flowPane_classes > .label {
+    -fx-background-radius: 50 50;
+    -fx-pref-width: 100;
+    -fx-pref-height: 100;
+    -fx-background-color: #f39c12;
+    -fx-font-size: 24;
+    -fx-alignment: center;
+}

@@ -69,6 +69,7 @@ public class AddingUserController implements Initializable {
             }
         });
         root.getChildren().add(choiceBox_user_type);
+        choiceBox_user_type.valueProperty().setValue("Администратор");
         button_generate.setOnAction(event -> this.generateNameAndPass());
         button_add_new_user.setOnAction(event -> this.addNewUser(choiceBox_user_type.getValue()));
         setAddInfo();

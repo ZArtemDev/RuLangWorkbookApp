@@ -1,27 +1,25 @@
 package com.ZArtemDev.RuLangWorkbookApp.student.task;
 
+import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.control.Separator;
 import javafx.scene.input.*;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Random;
 
 public class InsertLetterTask extends Task {
 
-    private LinkedList<Node> contentList = null;
+    private LinkedList<Node> contentList;
     private String  rightLettersSequence;
 
     public InsertLetterTask(String content, String  rightLettersSequence){
+
         String[] letters = rightLettersSequence.split("_");
         LinkedList<String> lettersList = new LinkedList<>();
         for(int i = 0; i < letters.length; i++){
@@ -34,16 +32,12 @@ public class InsertLetterTask extends Task {
         for(String s :splitedContent){
             Text target = new Text(40, 40, "_");
             target.setId("target");
+            target.setStyle("-fx-font-size: 24");
             target.setOnDragOver(new EventHandler <DragEvent>() {
                 public void handle(DragEvent event) {
-                    /* data is dragged over the target */
                     System.out.println("onDragOver");
-
-                    /* accept it only if it is  not dragged from the same node
-                     * and if it has a string data */
                     if (event.getGestureSource() != target &&
                             event.getDragboard().hasString()) {
-                        /* allow for both copying and moving, whatever user chooses */
                         event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
                     }
 
@@ -52,9 +46,7 @@ public class InsertLetterTask extends Task {
             });
             target.setOnDragEntered(new EventHandler <DragEvent>() {
                 public void handle(DragEvent event) {
-                    /* the drag-and-drop gesture entered the target */
                     System.out.println("onDragEntered");
-                    /* show to the user that it is an actual gesture target */
                     if (event.getGestureSource() != target &&
                             event.getDragboard().hasString()) {
                         target.setFill(Color.GREEN);
@@ -65,7 +57,6 @@ public class InsertLetterTask extends Task {
             });
             target.setOnDragExited(new EventHandler <DragEvent>() {
                 public void handle(DragEvent event) {
-                    /* mouse moved away, remove the graphical cues */
                     target.setFill(Color.BLACK);
 
                     event.consume();
@@ -75,15 +66,12 @@ public class InsertLetterTask extends Task {
                 public void handle(DragEvent event) {
                     /* data dropped */
                     System.out.println("onDragDropped");
-                    /* if there is a string data on dragboard, read it and use it */
                     Dragboard db = event.getDragboard();
                     boolean success = false;
                     if (db.hasString()) {
                         target.setText(db.getString());
                         success = true;
                     }
-                    /* let the source know whether the string was successfully
-                     * transferred and used */
                     event.setDropCompleted(success);
 
                     event.consume();
@@ -91,7 +79,9 @@ public class InsertLetterTask extends Task {
             });
 
             if(!s.equals("")){
-                contentList.add(new Text(s));
+                Text text = new Text(s);
+                text.setStyle("-fx-font-size: 24");
+                contentList.add(text);
                 contentList.add(target);
 
             }else {
@@ -106,16 +96,12 @@ public class InsertLetterTask extends Task {
             int pos = random.nextInt(lettersList.size());
             Text source = new Text(40, 40, lettersList.get(pos));
             source.setId("source");
+            source.setStyle("-fx-font-size: 24");
             lettersList.remove(pos);
             source.setOnDragDetected(new EventHandler <MouseEvent>() {
                 public void handle(MouseEvent event) {
-                    /* drag was detected, start drag-and-drop gesture*/
                     System.out.println("onDragDetected");
-
-                    /* allow any transfer mode */
                     Dragboard db = source.startDragAndDrop(TransferMode.ANY);
-
-                    /* put a string on dragboard */
                     ClipboardContent content = new ClipboardContent();
                     content.putString(source.getText());
                     db.setContent(content);
@@ -148,34 +134,46 @@ public class InsertLetterTask extends Task {
     public String getAnswer(LinkedList<Node> ll) {
         String answer = "";
 
-        for(int i = 0; i < ll.size(); i++){
-            if(contentList.get(i).getId()!= null && ll.get(i).getId().equals("target")){
-                if(ll.get(i) instanceof Text){
-                    answer += ((Text) ll.get(i)).getText() + "_";
+        for(Node node : ll){
+            if(node.getId()!= null && node.getId().equals("target")){
+                if(node instanceof Text){
+                    answer += ((Text) node).getText() + "_";
                 }
             }
         }
-        return answer;
+
+        if(answer.equals(rightLettersSequence)){
+            System.out.println("task.getAnswer " + answer + "\nrightResult " + rightLettersSequence + "\nRight!");
+            return "correct";
+        }
+        System.out.println("task.getAnswer " + answer + "\nrightResult " + rightLettersSequence + "\nWrong!");
+        return "incorrect " + answer;
     }
 
     @Override
-    public LinkedList coverIntoContainers(LinkedList ll) {
+    public LinkedList coverIntoContainers(LinkedList<Node> ll) {
         TextFlow textFlow = new TextFlow();
+        textFlow.setId("contentPane");
         HBox hBox = new HBox();
+        hBox.setId("lettersPane");
         hBox.setSpacing(10.0);
-        for(int i = 0; i < contentList.size(); i++){
-            if(contentList.get(i).getId()!= null && contentList.get(i).getId().equals("target")){
-                textFlow.getChildren().add(contentList.get(i));
-            }else if(contentList.get(i).getId()!= null && contentList.get(i).getId().equals("source")){
-                hBox.getChildren().add(contentList.get(i));
+
+        for (Node node: contentList) {
+            if(node.getId() != null && node.getId().equals("target")){
+                textFlow.getChildren().add(node);
+            }else if(node.getId()!= null && node.getId().equals("source")){
+                hBox.getChildren().add(node);
             }else {
-                textFlow.getChildren().add(contentList.get(i));
+                textFlow.getChildren().add(node);
             }
         }
-        LinkedList nl = new LinkedList();
+
+        LinkedList<Node> nl = new LinkedList<>();
         nl.add(textFlow);
         nl.add(hBox);
         return nl;
     }
+
+
 
 }

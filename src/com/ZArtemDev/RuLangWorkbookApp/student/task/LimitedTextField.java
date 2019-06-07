@@ -17,7 +17,7 @@ public class LimitedTextField extends TextField {
         this.setPrefColumnCount(value);
     }
 
-    public static void addTextLimiter(final TextField tf, final int maxLength){
+    private static void addTextLimiter(final TextField tf, final int maxLength){
         tf.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {

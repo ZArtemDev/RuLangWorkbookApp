@@ -1,58 +1,75 @@
 package com.ZArtemDev.RuLangWorkbookApp.student.task;
 
-import javafx.collections.ObservableList;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
-import java.awt.event.ActionEvent;
 import java.util.LinkedList;
 
 public class TypeLetterTask extends Task{
-    private LinkedList<Node> contentList = null;
+    private final String textFieldStyle =   "-fx-font-size: 24;"
+                                    + "-fx-background-color: transparent; "
+                                    + "-fx-border-width: 0 0 1 0;"
+                                    + "-fx-border-color: black;"
+                                    + "-fx-padding: -4;"
+                                    + "-fx-alignment: center;"
+                                    + "fx-background-insets:  0, 0 0 1 0;"
+                                    + "-fx-background-radius: 0";
+
+    private LinkedList<Node> contentList;
     private String  rightLettersSequence;
 
     public TypeLetterTask(String content, String  rightLettersSequence){
-        contentList = new LinkedList<>();
+        this.contentList = new LinkedList<>();
         String[] splitedContent =  content.split("_");
         for(String s :splitedContent){
             if(!s.equals("")){
-                contentList.add(new Text(s));
-                contentList.add(new LimitedTextField());
+                Text text = new Text(s);
+                text.setStyle("-fx-font-size: 24");
+                contentList.add(text);
+                LimitedTextField limitedTextField = new LimitedTextField();
+                limitedTextField.setStyle(textFieldStyle);
+
+                contentList.add(limitedTextField);
             }else {
                 contentList.remove(contentList.size()-1);
-                contentList.add(new LimitedTextField(2));
+                LimitedTextField limitedTextField = new LimitedTextField(2);
+                limitedTextField.setStyle(textFieldStyle);
+                contentList.add(limitedTextField);
             }
         }
         contentList.remove(contentList.size()-1);
 
-    this.rightLettersSequence = rightLettersSequence;
-
+        this.rightLettersSequence = rightLettersSequence;
     }
 
     public LinkedList<Node> getContentList(){
         return contentList;
     }
 
-    public LinkedList coverIntoContainers(LinkedList ll){
-        TextFlow textFlow = new TextFlow();
-        textFlow.getChildren().addAll(ll);
-        LinkedList nl = new LinkedList();
-        nl.add(textFlow);
-        return nl;
-    }
-
-    public String getAnswer(LinkedList ll){
+    public String getAnswer(LinkedList<Node> ll){
         String answer = "";
-        for(int i = 0; i < ll.size(); i++){
-            if(ll.get(i) instanceof LimitedTextField){
-                answer += ((LimitedTextField) ll.get(i)).getText() + "_";
+
+        for (Node node : ll) {
+            if(node instanceof LimitedTextField){
+                answer += ((LimitedTextField) node).getText() + "_";
             }
         }
-        return answer;
+
+        if(answer.equals(rightLettersSequence)){
+            System.out.println("task.getAnswer " + answer + "\nrightResult " + rightLettersSequence + "\nRight!");
+            return "correct";
+        }
+        System.out.println("task.getAnswer " + answer + "\nrightResult " + rightLettersSequence + "\nWrong!");
+        return "incorrect " + answer;
+    }
+
+    public LinkedList coverIntoContainers(LinkedList<Node> ll){
+        TextFlow textFlow = new TextFlow();
+        textFlow.setId("contentPane");
+        textFlow.getChildren().addAll(ll);
+        LinkedList<Node> nl = new LinkedList<>();
+        nl.add(textFlow);
+        return nl;
     }
 }

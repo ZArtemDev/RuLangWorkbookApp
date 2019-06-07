@@ -1,0 +1,54 @@
+.root {
+    -fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #f39c12, #d35400);
+}
+
+#header{
+    -fx-border-width : 0 0 1 0;
+    -fx-border-color: black;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,1), 10, 0, 0, 0);
+    -fx-background-color: white;
+}
+
+#anchorPane_current_course{
+    -fx-background-color: white;
+}
+
+#vBox_that_course {
+    -fx-spacing: 10;
+}
+
+#vBox_that_course > .button{
+    -fx-min-width: 500;
+}
+
+
+.button {
+    -fx-background-color: white;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+    }
+
+.button_course{
+    -fx-alignment: center-left;
+    -fx-max-width: Infinity;
+    -fx-pref-height: 150;
+    -fx-padding: 0 0 0 50;
+}
+
+.button_course > .text {
+    -fx-font-size: 24;
+}
+
+
+#button_add_course{
+    -fx-background-image: url('../resources/add_icon.png');
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-max-width: Infinity;
+    -fx-pref-height: 150;
+    -fx-padding: 50 0 0 0;
+}
+
+#button_add_course > .text {
+    -fx-font-size: 12;
+}
+
