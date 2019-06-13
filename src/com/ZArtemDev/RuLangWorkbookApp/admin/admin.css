@@ -19,3 +19,13 @@
     -fx-margin: 20;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
+
+.combo-box, .choice-box{
+    -fx-background-color: white;
+    -fx-margin: 20;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
+
+.button_user {
+    -fx-min-width: 300;
+}

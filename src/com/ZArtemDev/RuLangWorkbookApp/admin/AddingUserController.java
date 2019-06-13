@@ -24,7 +24,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class AddingUserController implements Initializable {
-    private String login, password;
 
     @FXML VBox root;
 
@@ -32,7 +31,7 @@ public class AddingUserController implements Initializable {
 
     @FXML Button button_generate, button_add_new_user;
 
-    @FXML Label label_generated_name_and_pass;
+    @FXML TextField textField_login,textField_password;
 
     @FXML TextField textField_last_name, textField_first_name, textField_middle_name;
 
@@ -44,12 +43,13 @@ public class AddingUserController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        root.getChildren().removeAll(gridPane_main_info, gridPane_add_info, gridPane_add_subject, gridPane_add_class, gridPane_gen_info);
+        root.getChildren().clear();
         choiceBox_user_type = new ChoiceBox<>(FXCollections.observableArrayList("Администратор", "Учитель", "Ученик"));
         choiceBox_user_type.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                root.getChildren().removeAll(gridPane_main_info, gridPane_add_info, gridPane_add_subject, gridPane_add_class, gridPane_gen_info);
+                root.getChildren().clear();
+                root.getChildren().add(choiceBox_user_type);
                 switch (choiceBox_user_type.getValue()) {
                     case "Администратор":
                         root.getChildren().addAll(gridPane_main_info, gridPane_gen_info);
@@ -105,43 +105,55 @@ public class AddingUserController implements Initializable {
     }
 
     private void addNewUser(String userType){
-        String query = "";
-        switch (userType){
-            case "Администратор":
-                query = "insert into rulangdatabase.administrators(login, password, first_name, last_name, middle_name) values('"
-                        + login + "','" + password + "','" + textField_first_name.getText() + "','" + textField_last_name.getText()
-                        + "','" + textField_middle_name.getText() + "')";
-                break;
-            case "Учитель":
-                query = "insert into rulangdatabase.teachers(login, password, first_name, last_name, middle_name, school_id) values('"
-                        + login + "','" + password + "','" + textField_first_name.getText() + "','" + textField_last_name.getText()
-                        + "','" + textField_middle_name.getText() + "',(select school_id from rulangdatabase.schools where school_name = '"
-                        + comboBox_school.getValue() + "'))";
-                break;
-            case "Ученик":
-                query = "insert into rulangdatabase.students(login, password, first_name, last_name, middle_name, class_id) values('"
-                        + login + "','" + password + "','" + textField_first_name.getText() + "','" + textField_last_name.getText()
-                        + "','" + textField_middle_name.getText() + "',(select class_id from rulangdatabase.classes where class_name = '"
-                        + comboBox_class.getValue() + "'))";
-                break;
-        }
-        try {
-            System.out.println(query);
-            Statement st = connection.createStatement();
-            st.executeUpdate(query);
-            st.close();
-        } catch (SQLException e) {
-            root.getChildren().add(new Label("Ошибка при добавлении пользователя"));
-            e.printStackTrace();
+        if(!textField_login.getText().isEmpty() && !textField_password.getText().isEmpty() &&
+                !textField_first_name.getText().isEmpty() && !textField_last_name.getText().isEmpty() && !textField_middle_name.getText().isEmpty()) {
+            String query = "";
+            switch (userType) {
+                case "Администратор":
+                    query = "insert into rulangdatabase.administrators(login, password, first_name, last_name, middle_name) values('"
+                            + textField_login.getText() + "','" + textField_password.getText() + "','" + textField_first_name.getText() + "','" + textField_last_name.getText()
+                            + "','" + textField_middle_name.getText() + "')";
+                    break;
+                case "Учитель":
+                    if(comboBox_school.valueProperty().getValue() != null) {
+                        query = "insert into rulangdatabase.teachers(login, password, first_name, last_name, middle_name, school_id) values('"
+                                + textField_login.getText() + "','" + textField_password.getText() + "','" + textField_first_name.getText() + "','" + textField_last_name.getText()
+                                + "','" + textField_middle_name.getText() + "',(select school_id from rulangdatabase.schools where school_name = '"
+                                + comboBox_school.getValue() + "'))";
+                    }else {
+                        root.getChildren().add(new Label("Выберите школу"));
+                    }
+                    break;
+                case "Ученик":
+                    if(comboBox_class.valueProperty().getValue() != null) {
+                        query = "insert into rulangdatabase.students(login, password, first_name, last_name, middle_name, class_id) values('"
+                                + textField_login.getText() + "','" + textField_password.getText() + "','" + textField_first_name.getText() + "','" + textField_last_name.getText()
+                                + "','" + textField_middle_name.getText() + "',(select class_id from rulangdatabase.classes where class_name = '"
+                                + comboBox_class.getValue() + "'))";
+                    }else {
+                        root.getChildren().add(new Label("Выберите класс"));
+                    }
+                    break;
+            }
+            try {
+                System.out.println(query);
+                Statement st = connection.createStatement();
+                st.executeUpdate(query);
+                st.close();
+            } catch (SQLException e) {
+                root.getChildren().add(new Label("Ошибка при добавлении пользователя"));
+                e.printStackTrace();
+            }
+        }else {
+            root.getChildren().add(new Label("При заполнении остались пустые поля"));
         }
     }
 
     public void generateNameAndPass(){
         String name = genName();
         String pass = genPass();
-        login = name;
-        password = pass;
-        label_generated_name_and_pass.setText("Логин: " + name + " Пароль: " + pass);
+        textField_login.setText(name);
+        textField_password.setText(pass);
     }
 
 

@@ -93,7 +93,8 @@ public class StudentController implements Initializable {
         }
 
         progressBar_progress.setProgress(0.0);
-        counter = 1;
+        progressBar_progress.setMaxWidth(Double.MAX_VALUE);
+        counter = 0;
         borderPane_task.setTop(vBox_progress_n_labels);
         borderPane_task.setBottom(button_next);
         borderPane_task.getChildren().remove(button_start);
@@ -122,7 +123,7 @@ public class StudentController implements Initializable {
 
         vBox_task.getChildren().clear();
         progressBar_progress.setProgress(progressBar_progress.getProgress() + 0.1);
-        label_task_number.setText("Задание " + counter++ + ".");
+        label_task_number.setText("Задание " + ++counter + ".");
 
         getTask();
 
@@ -136,9 +137,9 @@ public class StudentController implements Initializable {
 
     private void nextTask(){
 
-        if(progressBar_progress.getProgress() < 0.9){
+        if(progressBar_progress.getProgress() < 1){
             progressBar_progress.setProgress(progressBar_progress.getProgress() + 0.1);
-            label_task_number.setText("Задание " + counter++ + ".");
+            label_task_number.setText("Задание " + ++counter + ".");
 
             vBox_task.getChildren().clear();
 
@@ -153,14 +154,19 @@ public class StudentController implements Initializable {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+            System.out.println("\t\t\t" + counter + "\t\t\t");
+            if(counter <= 10) {
+                getTask();
+                if (type == 0) label_task_goal.setText(insertLetterTask);
+                else if (type == 1) label_task_goal.setText(typeLetterTask);
 
-            getTask();
-            if(type == 0) label_task_goal.setText(insertLetterTask);
-            else if(type == 1) label_task_goal.setText(typeLetterTask);
+                ll = task.getContentList();
 
-            ll = task.getContentList();
-
-            vBox_task.getChildren().addAll(task.coverIntoContainers(ll));
+                vBox_task.getChildren().addAll(task.coverIntoContainers(ll));
+            }else {
+                borderPane_task.getChildren().clear();
+                borderPane_task.setCenter(button_start);
+            }
         }else {
             borderPane_task.getChildren().clear();
             borderPane_task.setCenter(button_start);

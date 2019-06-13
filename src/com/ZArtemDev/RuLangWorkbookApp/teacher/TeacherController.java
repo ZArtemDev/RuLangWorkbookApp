@@ -23,6 +23,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class TeacherController implements Initializable {
@@ -60,7 +61,7 @@ public class TeacherController implements Initializable {
             Statement st = connection.createStatement();
             ResultSet rs = st.executeQuery(query);
             while (rs.next())
-                label_username.setText(rs.getString("first_name") + " " + rs.getString("last_name"));
+                label_username.setText(rs.getString("last_name") + " " + rs.getString("first_name") + " " + rs.getString("middle_name"));
             st.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -108,72 +109,76 @@ public class TeacherController implements Initializable {
         vBox_that_course.getChildren().add(new Label("Информация о курсе"));
         vBox_that_course.getChildren().add(new Separator());
 
-        Button student = new Button();
-        String student_id = null;
+        ArrayList<String> students = new ArrayList<String>();
 
-        String query = "select * from rulangdatabase.courses c\n" +
+        String query = "select student_id from rulangdatabase.courses c\n" +
                 "inner join rulangdatabase.teachers t \n" +
                 "on c.teacher = t.teacher_id \n" +
                 "inner join rulangdatabase.students s\n" +
                 "on s.class_id = c.class " +
                 "where c.course_id = '" + course_id + "'";
+        System.out.println(query);
         try {
             Statement st = connection.createStatement();
             ResultSet rs = st.executeQuery(query);
             while(rs.next()){
-                    student_id = rs.getString("student_id");
+                    students.add(rs.getString("student_id"));
             }
             st.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        int error_counter = 0;
-        query = "select answer from rulangdatabase.task_track t\n" +
-                "inner join rulangdatabase.students s\n" +
-                "on t.student_id = s.student_id\n" +
-                "where t.student_id = '"  + student_id +
-                "' and exercise_id in (select max(exercise_id) from rulangdatabase.task_track);";
-        try {
-            Statement st = connection.createStatement();
-            ResultSet rs = st.executeQuery(query);
-            while(rs.next()){
-                if(!rs.getString("answer").equals("correct")){
-                    error_counter++;
+        for(int i =0; i < students.size(); i++) {
+            int error_counter = 0;
+            System.out.println(students.get(i));
+            query = "select answer from rulangdatabase.task_track t\n" +
+                    "inner join rulangdatabase.students s\n" +
+                    "on t.student_id = s.student_id\n" +
+                    "where t.student_id = '" + students.get(i) +
+                    "' and exercise_id in (select max(exercise_id) from rulangdatabase.task_track where student_id = '" + students.get(i)+ "');";
+            try {
+                Statement st = connection.createStatement();
+                ResultSet rs = st.executeQuery(query);
+                while (rs.next()) {
+                    if (!rs.getString("answer").equals("correct")) {
+                        error_counter++;
+                    }
                 }
+
+
+                st.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-
-
-            st.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        query = "select * from rulangdatabase.task_track t\n" +
-                "inner join rulangdatabase.students s\n" +
-                "on t.student_id = s.student_id " +
-                "where t.student_id = '" + student_id + "'";
-        try {
-            Statement st = connection.createStatement();
-            ResultSet rs = st.executeQuery(query);
-            while(rs.next()){
-                if(error_counter == 0) {
-                    student.setText(rs.getString("s.last_name") + " " +
-                            rs.getString("s.first_name") + " " + rs.getString("s.middle_name") +
-                            "\t\t\t Последнее упражнение было выполнено правильно"
-                    );
-                }else {
-                    student.setText(rs.getString("s.last_name") + " " +
-                            rs.getString("s.first_name") + " " + rs.getString("s.middle_name") +
-                            "\t\t\t В последнем упражнении допущено " + error_counter + " ошибок");
+            Button student = new Button();
+            student.setPrefWidth(600);
+            student.setAlignment(Pos.CENTER_LEFT);
+            query = "select * from rulangdatabase.task_track t\n" +
+                    "inner join rulangdatabase.students s\n" +
+                    "on t.student_id = s.student_id " +
+                    "where t.student_id = '" + students.get(i) + "'";
+            try {
+                Statement st = connection.createStatement();
+                ResultSet rs = st.executeQuery(query);
+                while (rs.next()) {
+                    if (error_counter == 0) {
+                        student.setText(rs.getString("s.last_name") + " " +
+                                rs.getString("s.first_name") + " " + rs.getString("s.middle_name") +
+                                "\t\t\t Последнее упражнение было выполнено без ошибок"
+                        );
+                    } else {
+                        student.setText(rs.getString("s.last_name") + " " +
+                                rs.getString("s.first_name") + " " + rs.getString("s.middle_name") +
+                                "\t\t\t В последнем упражнении допущено " + error_counter + " ошибок");
+                    }
                 }
+                st.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-            st.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
+            vBox_that_course.getChildren().add(student);
         }
 
-
-        vBox_that_course.getChildren().add(student);
         anchorPane_courses.getChildren().add(vBox_that_course);
 
     }
@@ -204,9 +209,9 @@ public class TeacherController implements Initializable {
         subjectChoiceBox.getItems().add("Русский язык");
         dialogVbox.getChildren().addAll(classChoiceBox, subjectChoiceBox);
         Button button_add = new Button("Создать");
-        button_add.setOnAction(event1 -> create(dialog, classChoiceBox.getValue(), subjectChoiceBox.getValue(), dbConnector.getActiveUser()));
+        button_add.setOnAction(event1 -> create(dialog, dialogVbox, classChoiceBox.getValue(), subjectChoiceBox.getValue()));
         dialogVbox.getChildren().add(button_add);
-        Scene dialogScene = new Scene(dialogVbox, 200, 200);
+        Scene dialogScene = new Scene(dialogVbox, 250, 250);
         dialog.setScene(dialogScene);
         dialog.show();
 
@@ -231,10 +236,10 @@ public class TeacherController implements Initializable {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
     }
 
-    private void create(Stage dialog, String class_name, String subject, String teacher){
+    private void create(Stage dialog, VBox dialogVbox, String class_name, String subject){
+        if(class_name != null && subject != null){
         String query = "insert into rulangdatabase.courses(class, subject, teacher)\n" +
                 "values((select class_id from rulangdatabase.classes where class_name = '" + class_name + "'),'" + subject + "', (select teacher_id from rulangdatabase.teachers " +
                 "where login = '" + dbConnector.getActiveUser() + "'))";;
@@ -249,6 +254,10 @@ public class TeacherController implements Initializable {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }else {
+            Label label = new Label("При заполнении остались пустые поля");
+            dialogVbox.getChildren().add(label);
+    }
     }
 
     public void exit(ActionEvent event){

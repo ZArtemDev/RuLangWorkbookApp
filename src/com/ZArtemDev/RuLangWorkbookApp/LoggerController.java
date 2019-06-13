@@ -40,8 +40,8 @@ public class LoggerController  implements Initializable {
         exitBtn.setId("exitBtn");
         exitBtn.setOnAction(event -> Platform.exit());
 
-        userNameField.setText("thtest");
-        passwordField.setText("test");
+        userNameField.setText("st");
+        passwordField.setText("st");
     }
 
     public void login(ActionEvent event){
@@ -60,37 +60,40 @@ public class LoggerController  implements Initializable {
     }
 
     private boolean isValidUser(String username, String password) {
-        type = username.substring(0, 2);
-        String query = "";
-        switch (type){
-            case "ad":
-                query ="select * from rulangdatabase.administrators where login ='"
-                        + username + "' and password = '" + password + "'";
-                break;
-            case "th":
-                query ="select * from rulangdatabase.teachers where login ='"
-                        + username + "' and password = '" + password + "'";
-                break;
-            case "st":
-                query ="select * from rulangdatabase.students where login ='"
-                        + username + "' and password = '" + password + "'";
-                break;
-        }
-        try {
-            log.logp(Level.INFO, "LoggerController", "isValidUser", query);
-
-            Statement st = connection.createStatement();
-            ResultSet rs = st.executeQuery(query);
-            if(rs.next()){
-                user_info = rs.getString("login");
-                System.out.println(user_info);
-                return true;
+        if(username.length() >= 2) {
+            type = username.substring(0, 2);
+            String query = "";
+            switch (type) {
+                case "ad":
+                    query = "select * from rulangdatabase.administrators where login ='"
+                            + username + "' and password = '" + password + "'";
+                    break;
+                case "th":
+                    query = "select * from rulangdatabase.teachers where login ='"
+                            + username + "' and password = '" + password + "'";
+                    break;
+                case "st":
+                    query = "select * from rulangdatabase.students where login ='"
+                            + username + "' and password = '" + password + "'";
+                    break;
             }
-            st.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
+            try {
+                log.logp(Level.INFO, "LoggerController", "isValidUser", query);
+
+                Statement st = connection.createStatement();
+                ResultSet rs = st.executeQuery(query);
+                if (rs.next()) {
+                    user_info = rs.getString("login");
+                    System.out.println(user_info);
+                    return true;
+                }
+                st.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         errorInfoLabel.setText("Неправильное имя или пароль");
+        errorInfoLabel.setStyle("");
         return false;
     }
 }

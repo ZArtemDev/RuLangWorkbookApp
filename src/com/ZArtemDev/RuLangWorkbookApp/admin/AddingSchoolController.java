@@ -27,73 +27,71 @@ public class AddingSchoolController implements Initializable {
     @FXML
     FlowPane flow_pane;
 
+    @FXML
+    ComboBox<String> comboBox_region, comboBox_district, comboBox_location, comboBox_school;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         DBConnector dbConnector = DBConnector.getInstance();
         Connection connection = dbConnector.getConnection();
 
-        String query = "select distinct(federal_district) from rulangdatabase.locations order by federal_district asc";
+        flow_pane.setHgap(10);
 
-        ComboBox<String> districtComboBox = new ComboBox<String>(getList(connection, query));
-        districtComboBox.valueProperty().addListener(new ChangeListener<String>() {
+        String query = "select distinct(federal_district) from rulangdatabase.locations order by federal_district asc"; //Область
+        comboBox_region.setItems(getList(connection, query));
+        comboBox_region.valueProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                if (districtComboBox.getValue() != null) {
-                    if (flow_pane.getChildren().size() > 1) {
-                        flow_pane.getChildren().remove(flow_pane.getChildren().size() - 1);
-                    }
-                    String query = "select distinct(region) from rulangdatabase.locations where federal_district = '"
-                            + districtComboBox.getValue() + "' order by region asc";
-                    ComboBox<String> regionComboBox = new ComboBox<String>(getList(connection, query));
-                    regionComboBox.valueProperty().addListener(new ChangeListener<String>() {
-                        @Override
-                        public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                            if (regionComboBox.getValue() != null) {
-                                if (flow_pane.getChildren().size() > 2) {
-                                    flow_pane.getChildren().remove(flow_pane.getChildren().size() - 1);
-                                }
-                                String query = "select distinct(location) from rulangdatabase.locations where federal_district = '"
-                                        + districtComboBox.getValue() + "' and region = '" + regionComboBox.getValue()
-                                        + "' order by location asc";
-                                ComboBox<String> locationComboBox = new ComboBox<String>(getList(connection, query));
-                                locationComboBox.valueProperty().addListener(new ChangeListener<String>() {
-                                    @Override
-                                    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                                        TextField schoolTextField = new TextField();
-                                        Button commitBtn = new Button("Добавить школу");
-                                        commitBtn.setOnAction(new EventHandler<ActionEvent>() {
-                                            @Override
-                                            public void handle(ActionEvent event) {
-                                                String query = "insert into rulangdatabase.schools(school_name, location_id) "
-                                                        + "values('" + schoolTextField.getText()
-                                                        + "', (select id from rulangdatabase.locations where location = '"
-                                                        + locationComboBox.getValue() + "'));";
-                                                try {
-                                                    Statement st = connection.createStatement();
-                                                    st.executeUpdate(query);
-                                                    st.close();
-                                                } catch (SQLException e) {
-                                                    flow_pane.getChildren().add(new Label("Школа с таким именем уже существует"));
-                                                    e.printStackTrace();
-                                                }
-                                            }
-                                        });
+                String query = "select distinct(region) from rulangdatabase.locations where federal_district = '"
+                        + comboBox_region.getValue() + "' order by region asc"; //Район
+                comboBox_district.setItems(getList(connection, query));
+                comboBox_district.valueProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                        String query = "select distinct(location) from rulangdatabase.locations where federal_district = '"
+                                + comboBox_region.getValue() + "' and region = '" + comboBox_district.getValue()
+                                + "' order by location asc"; //Город
+                        comboBox_location.setItems(getList(connection, query));
+                        comboBox_location.valueProperty().addListener(new ChangeListener<String>() {
+                            @Override
+                            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                                flow_pane.getChildren().clear();
+                                TextField schoolTextField = new TextField();
+                                flow_pane.getChildren().add(schoolTextField);
+                                Button button = new Button("Добавить школу");
+                                flow_pane.getChildren().add(button);
 
-                                        flow_pane.getChildren().addAll(schoolTextField, commitBtn);
+                                Label label_info = new Label();
+                                flow_pane.getChildren().add(label_info);
+                                button.setOnAction(new EventHandler<ActionEvent>() {
+                                    @Override
+                                    public void handle(ActionEvent event) {
+                                        if (!schoolTextField.getText().isEmpty()) {
+                                            String query = "insert into rulangdatabase.schools(school_name, location_id) "
+                                                    + "values('" + schoolTextField.getText()
+                                                    + "', (select id from rulangdatabase.locations where location = '"
+                                                    + comboBox_location.getValue() + "'));";
+                                            try {
+                                                Statement st = connection.createStatement();
+                                                st.executeUpdate(query);
+                                                st.close();
+                                                label_info.setText("Школа добавлена");
+                                            } catch (SQLException e) {
+                                                label_info.setText("Школа с таким именем уже существует");
+                                                e.printStackTrace();
+                                            }
+                                        }else {
+                                            label_info.setText("Введите название школы");
+                                        }
                                     }
                                 });
-
-                                flow_pane.getChildren().add(locationComboBox);
                             }
-                        }
-                    });
+                        });
+                    }
+                });
 
-                    flow_pane.getChildren().add(regionComboBox);
-                }
             }
         });
-
-        flow_pane.getChildren().add(districtComboBox);
     }
 
 

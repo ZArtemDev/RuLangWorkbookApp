@@ -54,6 +54,12 @@ public class AdminController implements Initializable {
                 createPane("adding_user_pane.fxml");
             }
         });
+        removeUserBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                createPane("removing_user_pane.fxml");
+            }
+        });
         addSchoolBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -74,7 +80,7 @@ public class AdminController implements Initializable {
             Statement st = connection.createStatement();
             ResultSet rs = st.executeQuery(query);
             while (rs.next())
-                label_username.setText(rs.getString("first_name") + " " + rs.getString("last_name"));
+                label_username.setText(rs.getString("last_name") + " " + rs.getString("first_name") + " " + rs.getString("middle_name"));
             st.close();
         } catch (SQLException e) {
             e.printStackTrace();

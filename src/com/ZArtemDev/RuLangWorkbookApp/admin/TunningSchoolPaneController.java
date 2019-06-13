@@ -88,7 +88,10 @@ public class TunningSchoolPaneController implements Initializable {
                                             e.printStackTrace();
                                         }
                                         root.getChildren().remove(gridPane_select_school);
-                                        root.getChildren().add(new Label(comboBox_school.getValue()));
+                                        Label label_schoolname = new Label(comboBox_school.getValue());
+                                        label_schoolname.setStyle("-fx-font-size: 24;" +
+                                                "-fx-padding: 10 10 10 50");
+                                        root.getChildren().add(label_schoolname);
                                         getClasses();
                                     }
                                 });
@@ -139,40 +142,50 @@ public class TunningSchoolPaneController implements Initializable {
         TextField textField_class = new TextField();
         dialogVbox.getChildren().add(textField_class);
         Button button_add = new Button("Добавить");
-        button_add.setOnAction(event1 -> getValue(dialog, textField_class));
+        button_add.setOnAction(event1 -> getValue(dialog, dialogVbox, textField_class));
         dialogVbox.getChildren().add(button_add);
         Scene dialogScene = new Scene(dialogVbox, 200, 200);
         dialog.setScene(dialogScene);
         dialog.show();
     }
 
-    private void getValue(Stage gialog, TextField textField_class){
-        String query = "select class_name from rulangdatabase.classes where school_id = '" + school_id + "'";
-        try {
-            Statement st = connection.createStatement();
-            ResultSet rs = st.executeQuery(query);
-            while(rs.next()){
-                if(rs.getString(1).equals(textField_class.getText())){
-                    gialog.close();
+    private void getValue(Stage dialog, VBox dialogVbox, TextField textField_class){
+        if(!textField_class.getText().isEmpty()) {
+            Boolean userExist = false;
+            String query = "select class_name from rulangdatabase.classes where school_id = '" + school_id + "'";
+            try {
+                Statement st = connection.createStatement();
+                ResultSet rs = st.executeQuery(query);
+                while (rs.next()) {
+                    System.out.println(rs.getString(1));
+                    if (rs.getString(1).equals(textField_class.getText())) {
+                        System.out.println("equal");
+                        userExist =true;
+                        dialogVbox.getChildren().add(new Label("Такой класс уже существует"));
+                    }
                 }
+                st.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-            st.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        query = "insert into rulangdatabase.classes(class_name, school_id) values ('" + textField_class.getText() + "' , '" + 11 + "');";
-        try {
-            Statement st = connection.createStatement();
-            st.executeUpdate(query);
-            st.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+            if(!userExist) {
+                query = "insert into rulangdatabase.classes(class_name, school_id) values ('" + textField_class.getText() + "' , '" + 11 + "');";
+                try {
+                    Statement st = connection.createStatement();
+                    st.executeUpdate(query);
+                    st.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
 
-        flowPane_classes.getChildren().remove(button_add_class);
-        flowPane_classes.getChildren().add(new Label(textField_class.getText()));
-        flowPane_classes.getChildren().add(button_add_class);
-        gialog.close();
+                flowPane_classes.getChildren().remove(button_add_class);
+                flowPane_classes.getChildren().add(new Label(textField_class.getText()));
+                flowPane_classes.getChildren().add(button_add_class);
+                dialog.close();
+            }
+        } else {
+            dialogVbox.getChildren().add(new Label("Введите название"));
+        }
     }
 
 

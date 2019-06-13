@@ -27,7 +27,7 @@
    <center>
       <BorderPane fx:id="borderPane_task" prefHeight="344.0" prefWidth="560.0" BorderPane.alignment="CENTER">
          <center>
-            <Button fx:id="button_start" mnemonicParsing="false" text="Начать задание" BorderPane.alignment="CENTER" />
+            <Button fx:id="button_start" mnemonicParsing="false" text="Начать тестирование" BorderPane.alignment="CENTER" />
          </center>
          <bottom>
             <Button fx:id="button_next" mnemonicParsing="false" text="Далее" BorderPane.alignment="TOP_RIGHT" />
